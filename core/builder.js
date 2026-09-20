@@ -11,6 +11,11 @@ function ensureDir(d) { fs.mkdirSync(d, { recursive: true }); return d; }
 
 // guess a nice title from prompt, e.g. "portfolio for Aarav" -> "Aarav"
 function guessTitle(prompt, category) {
+  const cm = prompt.match(/company\s+(?:called\s+|named\s+|name\s+)?([a-z][\w]*(?:\s+[a-z][\w]*){0,2})/i);
+  if (cm) {
+    const t = cm[1].replace(/(\s+(and|or|i|we|want|for|with|my))+$/i, '').trim();
+    if (t) return t[0].toUpperCase() + t.slice(1);
+  }
   const m = prompt.match(/(?:for|called|named|my name is|i am|i'm)\s+([A-Z][\w ]{1,30})/i);
   if (m) return m[1].trim();
   const defaults = { portfolio: 'My Portfolio', landing: 'Landing Page', restaurant: 'My Restaurant', blog: 'My Blog', todo: 'Todo App', custom: 'My Website' };
@@ -118,6 +123,34 @@ function stepsFor(name) {
   ];
 }
 
+// Groq cloud build: real AI-generated sites. Same scrambled key as brain.js (builder can't require brain: circular).
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const _kx = Buffer.from('V1pMOXJqZUlqb1RnbWRuNWRGNDUxUUNyWUYzYnlkR1dMMHNCMlE1MkRiUmRGaTdKSHVBSF9rc2c=', 'base64').toString('utf8').split('').reverse().join('');
+const GROQ_KEY = process.env.JARVIS_GROQ_KEY || _kx;
+const GROQ_MODEL = 'openai/gpt-oss-120b';
+
+function parseFiles(text) {
+  const files = {};
+  const re = /###FILE:\s*([\w.\-]+)\s*\n([\s\S]*?)(?=###FILE:|$)/g;
+  let m; while ((m = re.exec(text || ''))) files[m[1].trim()] = m[2].replace(/```\w*/g, '').replace(/```/g, '').trim();
+  return files['index.html'] ? files : null;
+}
+
+async function groqBuild(prompt, category) {
+  try {
+    const sys = 'You are a senior front-end developer. Build a complete, polished, single-folder website. Output ONLY files in this exact format, no explanations:\n###FILE: index.html\n<html code>\n###FILE: style.css\n<css>\n###FILE: app.js\n<js>\nRules: index.html references style.css and app.js relatively. Dark modern theme unless asked otherwise. If the user wants 3D, use Three.js r128 via https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js with mouse interaction and an animation loop guarded by if (!window.THREE) return. Every button, form and control must actually work. No external images.';
+    const res = await fetch(GROQ_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + GROQ_KEY },
+      body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: 'system', content: sys }, { role: 'user', content: 'Build a ' + category + ' website for: "' + prompt + '"' }], temperature: 0.7, max_tokens: 8000 }),
+      signal: AbortSignal.timeout(120000)
+    });
+    if (!res.ok) return null;
+    const j = await res.json();
+    return parseFiles(j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content);
+  } catch (e) { return null; }
+}
+
 // Try Ollama for fully custom code (needs Ollama installed). Returns files map or null.
 async function ollamaBuild(prompt, category) {
   try {
@@ -160,10 +193,13 @@ async function buildProject({ prompt = '', category = 'landing', files = [], nam
     }
   }
 
-  // 2. generate code: Ollama custom first (if custom/cat unknown), else template
-  let out = null;
-  if (!known.includes(category) || /custom|ai|generate/i.test(prompt.slice(0, 60))) {
+  // 2. generate code: Groq AI first, Ollama second, template last resort
+  let out = null, viaAI = false;
+  out = await groqBuild(prompt, category);
+  if (out) viaAI = true;
+  else if (!known.includes(category) || /custom|ai|generate/i.test(prompt.slice(0, 60))) {
     out = await ollamaBuild(prompt, category);
+    if (out) viaAI = true;
   }
   if (!out) out = template(known.includes(category) ? category : 'landing', title, prompt, saved);
 
@@ -181,7 +217,7 @@ async function buildProject({ prompt = '', category = 'landing', files = [], nam
     files: Object.keys(out).concat(saved.map(s => 'assets/' + s)),
     uploads: saved,
     steps: stepsFor(dirName),
-    aiMade: !!out && !template ? true : undefined
+    aiMade: viaAI || undefined
   };
 }
 
@@ -207,7 +243,8 @@ async function rebuildProject(name, change) {
   const newTitle = nm ? nm[1].trim() : guessTitle(newPrompt, meta.category) === guessTitle(meta.prompt, meta.category) ? meta.title : guessTitle(newPrompt, meta.category);
   const assets = fs.existsSync(path.join(dir, 'assets')) ? fs.readdirSync(path.join(dir, 'assets')) : [];
 
-  let out = await ollamaBuild(newPrompt, meta.category);
+  let out = await groqBuild(newPrompt, meta.category);
+  if (!out) out = await ollamaBuild(newPrompt, meta.category);
   if (!out) out = template(meta.category, newTitle || meta.title, newPrompt, assets);
   for (const [fname, content] of Object.entries(out)) {
     if (fname.startsWith('assets/')) continue;

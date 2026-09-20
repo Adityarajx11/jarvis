@@ -6,7 +6,7 @@ const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 // Key stored scrambled (reversed + base64); decoded at runtime so it never sits readable in the file.
 const _kx = Buffer.from('V1pMOXJqZUlqb1RnbWRuNWRGNDUxUUNyWUYzYnlkR1dMMHNCMlE1MkRiUmRGaTdKSHVBSF9rc2c=', 'base64').toString('utf8').split('').reverse().join('');
 const GROQ_KEY = process.env.JARVIS_GROQ_KEY || _kx;
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_MODEL = 'openai/gpt-oss-120b';
 const OLLAMA_URL = 'http://localhost:11434';
 const OLLAMA_MODEL = 'llama3.1:latest';
 

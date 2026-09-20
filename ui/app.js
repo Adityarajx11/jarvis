@@ -112,8 +112,11 @@ function speak(t) {
     u.rate = 1.0;
     u.pitch = 0.9;
     const voices = speechSynthesis.getVoices().filter(v => v.lang?.startsWith('en'));
-    const pref = ['Google US English', 'Microsoft Guy', 'Microsoft Aria', 'Daniel'];
-    for (const p of pref) { const v = voices.find(v => v.name.includes(p)); if (v) { u.voice = v; break; } }
+    const selName = document.getElementById('voicePick')?.value;
+    u.voice = voices.find(v => v.name === selName)
+      || (() => { const pref = ['Google US English', 'Microsoft Guy', 'Microsoft Aria', 'Daniel'];
+           for (const p of pref) { const v = voices.find(v => v.name.includes(p)); if (v) return v; }
+           return voices[0]; })();
     u.onstart = () => { speaking = true; orbTalk(true); };
     u.onboundary = () => { try { window.jarvisWordAt = performance.now(); } catch {} };
     u.onend = u.onerror = () => { speaking = false; orbTalk(false); };
@@ -267,9 +270,14 @@ async function pollReminders() {
 speechSynthesis.onvoiceschanged = () => {
   const sel = document.getElementById('voicePick');
   if (!sel) return;
+  const prev = sel.value;
   const voices = speechSynthesis.getVoices().filter(v => v.lang?.startsWith('en'));
   sel.innerHTML = '';
   voices.forEach(v => { const o = document.createElement('option'); o.value = v.name; o.textContent = v.name; sel.appendChild(o); });
+  const pref = ['Google US English', 'Microsoft Guy', 'Microsoft Aria', 'Daniel'];
+  sel.value = (prev && [...sel.options].some(o => o.value === prev)) ? prev
+    : (pref.map(p => voices.find(v => v.name.includes(p))?.name).find(Boolean) || voices[0]?.name || '');
+  sel.onchange = () => speak('Hello, I am Jarvis.');
 };
 
 // Init
