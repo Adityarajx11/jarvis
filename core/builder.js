@@ -138,12 +138,12 @@ function parseFiles(text) {
 
 async function groqBuild(prompt, category) {
   try {
-    const sys = 'You are a senior front-end developer. Build a complete, polished, single-folder website. Output ONLY files in this exact format, no explanations:\n###FILE: index.html\n<html code>\n###FILE: style.css\n<css>\n###FILE: app.js\n<js>\nRules: index.html references style.css and app.js relatively. Dark modern theme unless asked otherwise. If the user wants 3D, use Three.js r128 via https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js with mouse interaction and an animation loop guarded by if (!window.THREE) return. Every button, form and control must actually work. No external images.';
+    const sys = 'You are a senior front-end developer. Build a complete, polished, single-folder website. Output ONLY files in this exact format, no explanations:\n###FILE: index.html\n<html code>\n###FILE: style.css\n<css>\n###FILE: app.js\n<js>\nRules: index.html references style.css and app.js relatively. Dark modern theme unless asked otherwise. No external images.\nEvery site MUST include, all wired and working: (1) animated 3D hero using Three.js r128 via https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js, mouse-reactive, animation loop guarded by if (!window.THREE) return, with headline plus CTA buttons; (2) splash preloader with progress bar that fades on load; (3) sticky nav with smooth-scroll links plus footer; (4) scroll-reveal animations on sections; (5) animated stat counters; (6) image gallery with click lightbox (CSS/SVG placeholder art when no uploads); (7) auto-rotating testimonials slider; (8) contact or booking form with confirmation message.\nCategory extras, only when they fit: any food business (bakery, cafe, restaurant, food) or shop also gets a working cart drawer with quantities, totals and checkout confirmation; products/vehicles also gets a live color or variant configurator that re-themes the page and the 3D scene.';
     const res = await fetch(GROQ_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + GROQ_KEY },
-      body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: 'system', content: sys }, { role: 'user', content: 'Build a ' + category + ' website for: "' + prompt + '"' }], temperature: 0.7, max_tokens: 8000 }),
-      signal: AbortSignal.timeout(120000)
+      body: JSON.stringify({ model: GROQ_MODEL, messages: [{ role: 'system', content: sys }, { role: 'user', content: 'Build a ' + category + ' website for: "' + prompt + '"' }], temperature: 0.7, max_tokens: 12000 }),
+      signal: AbortSignal.timeout(180000)
     });
     if (!res.ok) return null;
     const j = await res.json();
