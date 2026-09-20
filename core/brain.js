@@ -1,6 +1,6 @@
 // Brain: local Ollama + rule-based fallback with fuzzy typo handling.
 const sys = require('./system');
-const { buildProject, rebuildProject, listProjects } = require('./builder');
+
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 // Key stored scrambled (reversed + base64); decoded at runtime so it never sits readable in the file.
@@ -229,33 +229,17 @@ async function handleCommand(rawText) {
 
   // 6a. REBUILD / LIST: "rebuild spicehub with neon theme" / "list projects"
   if (/list (my )?projects?/.test(text)) {
-    const ps = listProjects();
-    return ps.length ? `Your projects: ${ps.join(', ')}. Say "rebuild <name> with <change>" to update one.` : 'No projects yet, Say "build a portfolio website" to start.';
+    return 'The website builder was removed from Jarvis.';
   }
   let rb = text.match(/^(rebuild|update|modify|change)\s+([\w\- ]+?)\s+(with|to|-|:)\s*(.+)/);
   if (rb) {
-    try {
-      const proj = await rebuildProject(rb[2].trim().replace(/\s+/g, '-'), rb[4].trim());
-      const port = process.env.JARVIS_LIVE_PORT || process.env.JARVIS_PORT || 7777;
-      try { require('child_process').exec(`start "" "http://localhost:${port}${proj.url}"`, { windowsHide: true }); } catch {}
-      return `Updated ${proj.name} — ${rb[4].trim()}. Preview reloaded.`;
-    } catch (e) { return `Couldn't rebuild: ${e.message}`; }
+    return 'The website builder was removed from Jarvis.';
   }
 
-  // 6b. BUILD: "build a portfolio website for Aarav" / "make me a todo app"
+  // 6b. BUILD: removed — website builder deleted.
   if (/(build|create|make|generat|bilt|bild)\b.*(website|web ?site|web ?app|web ?page|portfolio|landing|restaurant|blog|todo|app|page)/.test(text)
     || /^build\b/.test(text)) {
-    const cat = /portfolio/.test(text) ? 'portfolio' : /restaurant|food|menu/.test(text) ? 'restaurant'
-      : /blog/.test(text) ? 'blog' : /todo|task/.test(text) ? 'todo'
-      : /landing/.test(text) ? 'landing' : 'landing';
-    const nm = orig.match(/(?:called|named)\s+([\w \-]+)/i);
-    const cleanName = nm ? nm[1].replace(/\s+with\s+.*$/i, '').trim() : '';
-    try {
-      const proj = await buildProject({ prompt: orig, category: cat, files: [], name: cleanName });
-      const port = process.env.JARVIS_LIVE_PORT || process.env.JARVIS_PORT || 7777;
-      try { require('child_process').exec(`start "" "http://localhost:${port}${proj.url}"`, { windowsHide: true }); } catch {}
-      return `Done — your ${cat} "${proj.title}" is built in F:\\jarvis\\projects\\${proj.name}\\ (${proj.files.join(', ')}). Preview open in your browser. Steps: 1) check the preview, 2) edit files in VS Code, 3) drop the folder on netlify.com/drop to publish free. Drop files on me in the HUD Builder anytime and I'll include them.`;
-    } catch (e) { return `Build failed: ${e.message}`; }
+    return 'The website builder was removed from Jarvis. I can still do apps, system, files and research.';
   }
 
   // 6c. NOTES: "note buy milk" / "my notes" / "search notes for invoice" / "delete note 3"

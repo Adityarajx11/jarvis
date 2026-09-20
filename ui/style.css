@@ -103,14 +103,10 @@ select:focus,input[type="text"]:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:vertical;min-height:60px}
 select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 
-.btn-primary{height:40px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:1px}
-.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
-.btn-ghost{height:34px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all 0.2s}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 
-#drop{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:16px;text-align:center;color:var(--text3);font-size:11px;cursor:pointer;transition:border-color 0.2s}
-#drop:hover{border-color:var(--accent)}
-#drop input{display:none}
+
+
+
 
 /* Toast */
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 24px;color:var(--text);font-size:13px;opacity:0;transition:all 0.3s;z-index:30;pointer-events:none;max-width:400px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
@@ -127,11 +123,7 @@ select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:u
 .rm-item.done button{border-color:var(--success);color:var(--success)}
 
 /* Projects */
-.proj{padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
-.proj b{font-size:12px;display:block;margin-bottom:4px}
-.proj .row{display:flex;gap:4px}
-.proj button{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text2);cursor:pointer;font-size:11px;transition:all 0.2s}
-.proj button:hover{border-color:var(--accent);color:var(--accent)}
+
 
 /* Voice indicator */
 body.voice-active #mic{border-color:var(--accent);color:var(--accent);box-shadow:0 0 20px var(--glow);animation:voicePulse 1s infinite}

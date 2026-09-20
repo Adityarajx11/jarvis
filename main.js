@@ -3,7 +3,6 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { handleCommand } = require('./core/brain');
-const { buildProject, listProjects, PROJECTS_DIR } = require('./core/builder');
 const open = require('open');
 
 const PORT = process.env.JARVIS_PORT || 7777;
@@ -50,11 +49,6 @@ const server = http.createServer(async (req, res) => {
 
   if (req.url === '/api/health') { res.writeHead(200); return res.end('{"ok":true}'); }
 
-  if (req.url === '/api/projects' && req.method === 'GET') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ projects: listProjects() }));
-  }
-
   if (req.url === '/api/tasks' && req.method === 'GET') {
     const { listTasks } = require('./core/tasks');
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -94,7 +88,7 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify({
       battery: bat,
       openTasks: listTasks().filter(t => !t.done).length,
-      projects: listProjects().length,
+      projects: 0,
       uptime: Math.floor(process.uptime())
     }));
   }
@@ -113,33 +107,6 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(500); return res.end(JSON.stringify({ error: e.message }));
     }
   }
-  if (req.url === '/api/build' && req.method === 'POST') {
-    try {
-      const { prompt, category, files, name } = JSON.parse(await readBody(req));
-      console.log(`> build [${category}] ${prompt} (+${(files || []).length} files)`);
-      const proj = await buildProject({ prompt: prompt || '', category: category || 'landing', files: files || [], name: name || '' });
-      console.log(`< built ${proj.name}: ${proj.files.join(', ')}`);
-      try { await open(`http://localhost:${server.address().port}${proj.url}`); } catch {}
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify(proj));
-    } catch (e) {
-      res.writeHead(500); return res.end(JSON.stringify({ error: e.message }));
-    }
-  }
-
-  if (req.url === '/api/rebuild' && req.method === 'POST') {
-    try {
-      const { name, change } = JSON.parse(await readBody(req));
-      const { rebuildProject } = require('./core/builder');
-      const proj = await rebuildProject(name, change);
-      try { await open(`http://localhost:${server.address().port}${proj.url}`); } catch {}
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify(proj));
-    } catch (e) {
-      res.writeHead(500); return res.end(JSON.stringify({ error: e.message }));
-    }
-  }
-
   // ---- NEW FEATURES ----
 
   // Weather
@@ -259,18 +226,6 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ cpu: parseFloat(cpu) || 0, mem: parseFloat(mem) || 0 }));
     } catch (e) { res.writeHead(500); return res.end(JSON.stringify({ error: e.message })); }
-  }
-
-  // static project previews
-  if (cleanUrl.startsWith('/projects/')) {
-    let rel = decodeURIComponent(cleanUrl.slice('/projects/'.length)).replace(/\.\./g, '');
-    if (rel.endsWith('/')) rel += 'index.html';
-    const fp = path.join(PROJECTS_DIR, rel);
-    if (fp.startsWith(PROJECTS_DIR) && fs.existsSync(fp) && fs.statSync(fp).isFile()) {
-      res.writeHead(200, { 'Content-Type': MIME[path.extname(fp).toLowerCase()] || 'text/plain', 'Cache-Control': 'no-store' });
-      return fs.createReadStream(fp).pipe(res);
-    }
-    res.writeHead(404); return res.end('project file not found');
   }
 
   // static UI
