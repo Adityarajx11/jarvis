@@ -1,108 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Velocity Kicks — Air Surge</title>
-<link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <title>Velocity Kicks – Air Surge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 </head>
-<body data-cw="ember">
-<div id="loader"><div class="load-box"><b>VELOCITY KICKS</b><div class="load-bar"><div id="loadFill"></div></div><span id="loadPct">0%</span></div></div>
+<body>
 
-<nav id="nav">
-  <a class="brand" href="#top">VELOCITY KICKS</a>
-  <div class="links">
-    <a href="#shoe">Shoe</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#reviews">Reviews</a>
-    <a href="#signup">Signup</a>
-  </div>
-  <button id="cartBtn" type="button">Cart <b id="cartCount">0</b></button>
-</nav>
+<!-- Preloader -->
+<div id="preloader">
+    <div class="loader">
+        <div class="progress"></div>
+    </div>
+</div>
 
-<header id="top" class="hero">
-  <canvas id="stage3d"></canvas>
-  <div class="hero-inner">
-    <p class="kicker">Flagship drop · Air Surge</p>
-    <h1>ENGINEERED<br />MOTION</h1>
-    <p class="sub">Featherlight knit, carbon propulsion plate, grip that bites back. Pick a colorway, pick a size, feel it.</p>
-    <svg id="shoeSvg" viewBox="0 0 420 240" aria-label="Air Surge sneaker preview">
-      <path id="shoe-sole" d="M30,168 L390,168 L384,192 Q382,200 360,200 L62,200 Q34,200 30,182 Z" fill="#f5f2ea"/>
-      <path id="shoe-base" d="M62,168 L58,105 Q57,88 75,82 L108,72 Q128,67 138,84 L150,108 L235,116 Q310,122 358,150 L378,168 Z" fill="#ff5a00"/>
-      <ellipse cx="105" cy="78" rx="26" ry="12" fill="#141414"/>
-      <path d="M150,108 L235,116 L225,132 L145,124 Z" fill="#000" opacity="0.25"/>
-      <g stroke="#fff" stroke-width="5" stroke-linecap="round">
-        <line x1="158" y1="110" x2="182" y2="106"/>
-        <line x1="186" y1="112" x2="210" y2="109"/>
-        <line x1="214" y1="114" x2="238" y2="112"/>
-      </g>
-      <path id="shoe-accent" d="M120,165 L200,120 L225,122 L150,168 Z" fill="#ffe9a8"/>
-      <path d="M330,140 Q360,148 378,168 L340,168 Q328,154 330,140 Z" fill="#000" opacity="0.2"/>
-    </svg>
-    <div class="config">
-      <div class="swatches" id="swatches"></div>
-      <div class="sizes" id="sizes"></div>
-    </div>
-    <div class="cta-row">
-      <button class="btn primary" id="addBtn" type="button">Add to cart · ₹7,999</button>
-      <a class="btn ghost" href="#gallery">See it move</a>
-    </div>
-    <p id="pickMsg" class="pick-msg"></p>
-  </div>
+<!-- Sticky Navigation -->
+<header id="nav">
+    <div class="logo">Velocity Kicks</div>
+    <nav>
+        <a href="#hero">Home</a>
+        <a href="#stats">Stats</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#signup">Launch</a>
+        <a href="#" id="cart-toggle">Cart (<span id="cart-count">0</span>)</a>
+    </nav>
 </header>
 
-<div class="strip"><div class="strip-track" id="stripTrack"></div></div>
+<!-- 3D Hero Section -->
+<section id="hero">
+    <div id="hero-canvas"></div>
+    <div class="hero-content">
+        <h1>Air Surge</h1>
+        <p>The future of speed, now on your feet.</p>
 
-<section id="shoe">
-  <h2>Built for speed <small>3 tech pillars</small></h2>
-  <div class="cards">
-    <div class="card"><h3>Carbon Plate</h3><p>Full-length propulsion plate returns every stride.</p></div>
-    <div class="card"><h3>CloudKnit</h3><p>Single-thread upper. 212 grams in UK 9.</p></div>
-    <div class="card"><h3>Bite Grip</h3><p>Wet-road traction, lab-tested at 40 km/h.</p></div>
-  </div>
+        <div class="configurator">
+            <div class="color-picker">
+                <button class="color-swatch" data-color="#111111" style="background:#111111;"></button>
+                <button class="color-swatch" data-color="#ff6600" style="background:#ff6600;"></button>
+                <button class="color-swatch" data-color="#00aaff" style="background:#00aaff;"></button>
+            </div>
+            <div class="size-picker">
+                <label for="size-select">Size:</label>
+                <select id="size-select">
+                    <option>7</option><option>8</option><option>9</option><option>10</option><option>11</option>
+                </select>
+            </div>
+            <button id="add-to-cart" class="cta">Add to Cart</button>
+        </div>
+    </div>
 </section>
 
-<section id="gallery">
-  <h2>Gallery</h2>
-  <div class="cards" id="galGrid">
-    <div class="card art a1"><h3>Street</h3></div>
-    <div class="card art a2"><h3>Court</h3></div>
-    <div class="card art a3"><h3>Trail</h3></div>
-    <div class="card art a4"><h3>Night</h3></div>
-  </div>
-  <div id="lightbox"><span id="lbClose">×</span><div id="lbBody"></div><p id="lbCap"></p></div>
+<!-- Stats Section -->
+<section id="stats" class="section">
+    <h2>Our Impact</h2>
+    <div class="stats-grid">
+        <div class="stat">
+            <div class="counter" data-target="5000">0</div>
+            <p>Pairs Sold</p>
+        </div>
+        <div class="stat">
+            <div class="counter" data-target="1200">0</div>
+            <p>Happy Customers</p>
+        </div>
+        <div class="stat">
+            <div class="counter" data-target="24">0</div>
+            <p>Hours of R&D</p>
+        </div>
+    </div>
 </section>
 
-<section id="reviews">
-  <h2>Runners talk</h2>
-  <div class="rev-box"><p id="revText"></p><b id="revName"></b><div class="rev-dots" id="revDots"></div></div>
-  <div class="stats">
-    <div class="stat"><b data-count="120">0</b><span>k+ runners</span></div>
-    <div class="stat"><b data-count="98">0</b><span>% would re-buy</span></div>
-    <div class="stat"><b data-count="24">0</b><span>pro athletes</span></div>
-  </div>
+<!-- Gallery Section -->
+<section id="gallery" class="section">
+    <h2>Gallery</h2>
+    <div class="gallery-grid">
+        <div class="gallery-item" data-index="0"><svg viewBox="0 0 200 200"><rect width="200" height="200" fill="var(--accent)"/></svg></div>
+        <div class="gallery-item" data-index="1"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="var(--accent)"/></svg></div>
+        <div class="gallery-item" data-index="2"><svg viewBox="0 0 200 200"><polygon points="100,10 190,190 10,190" fill="var(--accent)"/></svg></div>
+    </div>
 </section>
 
-<section id="signup">
-  <h2>Launch offer</h2>
-  <div class="order-box">
-    <p>Get 15% off the Air Surge drop. One email, no spam.</p>
-    <input id="sEmail" type="email" placeholder="you@email.com" />
-    <button class="btn primary" id="signupBtn" type="button">Claim 15% off</button>
-    <p id="signupMsg" class="order-msg"></p>
-  </div>
+<!-- Lightbox -->
+<div id="lightbox" class="hidden">
+    <div class="lb-content"><span id="lb-close">&times;</span></div>
+</div>
+
+<!-- Testimonials Slider -->
+<section id="testimonials" class="section">
+    <h2>What Runners Say</h2>
+    <div class="slider">
+        <div class="slide active">
+            <p>"The Air Surge feels like I'm floating. Pure speed!"</p>
+            <cite>- Alex M.</cite>
+        </div>
+        <div class="slide">
+            <p>"Never had a shoe that reacts to my moves. Incredible."</p>
+            <cite>- Jamie L.</cite>
+        </div>
+        <div class="slide">
+            <p>"Stylish, fast, and comfortable. My go‑to sneaker."</p>
+            <cite>- Sam K.</cite>
+        </div>
+        <div class="slider-controls">
+            <button id="prev-slide">&#9664;</button>
+            <button id="next-slide">&#9654;</button>
+        </div>
+    </div>
 </section>
 
-<footer>Built by Jarvis · Velocity Kicks demo</footer>
+<!-- Launch Offer Signup -->
+<section id="signup" class="section">
+    <h2>Get Early Access</h2>
+    <form id="signup-form">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">Notify Me</button>
+    </form>
+    <p id="signup-msg" class="hidden">Thanks! We'll keep you posted.</p>
+</section>
 
-<aside id="drawer" aria-hidden="true">
-  <div class="drawer-head"><h3>Your cart</h3><button id="closeDrawer" type="button">×</button></div>
-  <div id="cartItems"></div>
-  <div class="drawer-foot"><span>Total</span><b id="cartTotal">₹0</b></div>
-  <button class="btn primary block" id="checkoutBtn" type="button">Checkout</button>
-</aside>
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Velocity Kicks. All rights reserved.</p>
+</footer>
 
-<script src="three.min.js"></script>
+<!-- Cart Drawer -->
+<div id="cart-drawer" class="hidden">
+    <h3>Your Cart</h3>
+    <ul id="cart-items"></ul>
+    <p>Total: $<span id="cart-total">0</span></p>
+    <button id="checkout-btn">Checkout</button>
+    <button id="close-cart">Close</button>
+    <p id="checkout-msg" class="hidden">Thank you! Your order is confirmed.</p>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>
