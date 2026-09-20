@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Velocity Kicks - Air Surge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader">
+            <div class="progress"></div>
+        </div>
+    </div>
+
+    <!-- Sticky Nav -->
+    <nav id="navbar">
+        <div class="logo">Velocity Kicks</div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#configurator">Configure</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#signup">Launch Offer</a></li>
+        </ul>
+        <button id="cartBtn" aria-label="Cart">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 4h-2l-3 9v2h2l1 5h14l1-5h2v-2l-3-9h-2l-1 3h-8l-1-3zm0 5h10l1.5 4h-13l1.5-4zm-2 9h14l-.75 3h-12.5l-.75-3z"/></svg>
+            <span id="cartCount">0</span>
+        </button>
+    </nav>
+
+    <!-- 3D Hero Section -->
+    <section id="hero" class="section">
+        <canvas id="heroCanvas"></canvas>
+        <div class="hero-content">
+            <h1>Air Surge</h1>
+            <p>Feel the future under your feet.</p>
+            <div class="cta-buttons">
+                <button id="openConfiguratorBtn" class="cta">Configure</button>
+                <button id="addToCartHeroBtn" class="cta">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Configurator -->
+    <section id="configurator" class="section">
+        <h2>Customize Your Air Surge</h2>
+        <div class="configurator-grid">
+            <div class="color-picker">
+                <h3>Colorways</h3>
+                <div class="swatches">
+                    <button class="swatch" data-color="#ff6600" style="background:#ff6600;"></button>
+                    <button class="swatch" data-color="#00e5ff" style="background:#00e5ff;"></button>
+                    <button class="swatch" data-color="#39ff14" style="background:#39ff14;"></button>
+                </div>
+            </div>
+            <div class="size-picker">
+                <h3>Size</h3>
+                <select id="sizeSelect">
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9" selected>9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                </select>
+            </div>
+            <div class="price-add">
+                <p class="price">$199.00</p>
+                <button id="addToCartConfigBtn" class="cta">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section id="stats" class="section">
+        <div class="stat">
+            <h3 class="counter" data-target="5000">0</h3>
+            <p>Pairs Sold</p>
+        </div>
+        <div class="stat">
+            <h3 class="counter" data-target="1200">0</h3>
+            <p>Happy Customers</p>
+        </div>
+        <div class="stat">
+            <h3 class="counter" data-target="24">0</h3>
+            <p>Hours of Development</p>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="gallery" class="section">
+        <h2>Gallery</h2>
+        <div class="gallery-grid">
+            <!-- 6 placeholder SVG images -->
+            <div class="gallery-item"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0NDQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZm9udC1zaXplPSIyMHB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5JbWFnZSAxPC90ZXh0Pjwvc3ZnPg==" alt="Shoe 1"></div>
+            <div class="gallery-item"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0NDQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZm9udC1zaXplPSIyMHB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5JbWFnZSAyPC90ZXh0Pjwvc3ZnPg==" alt="Shoe 2"></div>
+            <div class="gallery-item"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0NDQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZm9udC1zaXplPSIyMHB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5JbWFnZSAzPC90ZXh0Pjwvc3ZnPg==" alt="Shoe 3"></div>
+            <div class="gallery-item"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0NDQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZm9udC1zaXplPSIyMHB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5JbWFnZSA0PC90ZXh0Pjwvc3ZnPg==" alt="Shoe 4"></div>
+            <div class="gallery-item"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0NDQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZm9udC1zaXplPSIyMHB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5JbWFnZSA1PC90ZXh0Pjwvc3ZnPg==" alt="Shoe 5"></div>
+            <div class="gallery-item"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0NDQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZm9udC1zaXplPSIyMHB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5JbWFnZSA2PC90ZXh0Pjwvc3ZnPg==" alt="Shoe 6"></div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="reviews" class="section">
+        <h2>What Customers Say</h2>
+        <div class="testimonial-slider">
+            <div class="testimonial active">
+                <p>"The Air Surge feels like running on clouds. The neon orange is 🔥!"</p>
+                <span>- Alex P.</span>
+            </div>
+            <div class="testimonial">
+                <p>"Best sneaker launch of the year. The configurator is slick!"</p>
+                <span>- Jamie L.</span>
+            </div>
+            <div class="testimonial">
+                <p>"Comfort meets style. Can't wait for the next drop."</p>
+                <span>- Sam K.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Launch Offer Signup -->
+    <section id="signup" class="section">
+        <h2>Get Early Access</h2>
+        <form id="signupForm">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit" class="cta">Notify Me</button>
+        </form>
+        <p id="signupMessage" class="hidden">Thanks! We'll keep you posted.</p>
+    </section>
+
+    <!-- Cart Drawer -->
+    <aside id="cartDrawer" class="hidden">
+        <h3>Your Cart</h3>
+        <ul id="cartItems"></ul>
+        <p class="total">Total: $<span id="cartTotal">0.00</span></p>
+        <button id="checkoutBtn" class="cta">Checkout</button>
+        <button id="closeCartBtn" class="cta secondary">Close</button>
+        <p id="checkoutMessage" class="hidden">Thank you! Your order is confirmed.</p>
+    </aside>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="hidden">
+        <img src="" alt="Enlarged view">
+        <button id="closeLightboxBtn">&times;</button>
+    </div>
+
+    <footer>
+        <p>© 2026 Velocity Kicks. All rights reserved.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

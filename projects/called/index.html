@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexora Systems</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+    <div class="loader">
+        <div class="progress"></div>
+    </div>
+</div>
+
+<!-- Sticky Navbar -->
+<header class="navbar">
+    <div class="container">
+        <a href="#" class="logo">Nexora<span>Systems</span></a>
+        <nav>
+            <a href="#product">Product</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Section with Three.js Canvas -->
+<section class="hero" id="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+        <h1>Automate Your Cloud. Accelerate Your Business.</h1>
+        <p>Powerful, scalable automation tools for modern enterprises.</p>
+        <a href="#contact" class="cta-btn">Start Free Trial</a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features container" id="product">
+    <h2 class="section-title reveal">Why Nexora?</h2>
+    <div class="grid">
+        <div class="feature-card reveal">
+            <i class="fa-solid fa-gear fa-2x"></i>
+            <h3>Seamless Integration</h3>
+            <p>Connect with any cloud provider in minutes.</p>
+        </div>
+        <div class="feature-card reveal">
+            <i class="fa-solid fa-bolt fa-2x"></i>
+            <h3>Real‑time Automation</h3>
+            <p>Trigger actions instantly with event‑driven workflows.</p>
+        </div>
+        <div class="feature-card reveal">
+            <i class="fa-solid fa-shield-alt fa-2x"></i>
+            <h3>Enterprise Security</h3>
+            <p>Built‑in compliance and role‑based access control.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section (Counters) -->
+<section class="stats container">
+    <div class="stat-card reveal">
+        <div class="counter" data-target="1500">0</div>
+        <p>Clients Served</p>
+    </div>
+    <div class="stat-card reveal">
+        <div class="counter" data-target="3200">0</div>
+        <p>Automations Run Daily</p>
+    </div>
+    <div class="stat-card reveal">
+        <div class="counter" data-target="99.9">0</div>
+        <p>Uptime %</p>
+    </div>
+</section>
+
+<!-- Pricing Table -->
+<section class="pricing container" id="pricing">
+    <h2 class="section-title reveal">Pricing</h2>
+    <div class="pricing-grid">
+        <div class="price-card reveal">
+            <h3>Starter</h3>
+            <p class="price">$29/mo</p>
+            <ul>
+                <li>Up to 5,000 tasks</li>
+                <li>Email support</li>
+                <li>Basic analytics</li>
+            </ul>
+            <a href="#contact" class="cta-btn small">Choose</a>
+        </div>
+        <div class="price-card highlight reveal">
+            <h3>Professional</h3>
+            <p class="price">$99/mo</p>
+            <ul>
+                <li>Unlimited tasks</li>
+                <li>Priority support</li>
+                <li>Advanced analytics</li>
+                <li>Team collaboration</li>
+            </ul>
+            <a href="#contact" class="cta-btn small">Choose</a>
+        </div>
+        <div class="price-card reveal">
+            <h3>Enterprise</h3>
+            <p class="price">Contact Us</p>
+            <ul>
+                <li>Custom workloads</li>
+                <li>Dedicated manager</li>
+                <li>SLAs & compliance</li>
+                <li>On‑premise option</li>
+            </ul>
+            <a href="#contact" class="cta-btn small">Contact</a>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="gallery container">
+    <h2 class="section-title reveal">Product Screenshots</h2>
+    <div class="gallery-grid">
+        <!-- 6 placeholder SVG thumbnails -->
+        <div class="gallery-item reveal"><img src="data:image/svg+xml,%3Csvg%20width%3D'300'%20height%3D'200'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Crect%20width%3D'300'%20height%3D'200'%20fill'%3D'%23333'%20/%3E%3Ctext%20x%3D'150'%20y%3D'115'%20font-size%3D'20'%20text-anchor%3D'middle'%20fill'%3D'%23aaa'%3ENexora%20UI%3C/text%3E%3C/svg%3E" alt="Screenshot">
+        </div>
+        <div class="gallery-item reveal"><img src="data:image/svg+xml,%3Csvg%20width%3D'300'%20height%3D'200'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Crect%20width%3D'300'%20height%3D'200'%20fill'%3D'%23333'%20/%3E%3Ctext%20x%3D'150'%20y%3D'115'%20font-size%3D'20'%20text-anchor%3D'middle'%20fill'%3D'%23aaa'%3EWorkflow%20Builder%3C/text%3E%3C/svg%3E" alt="Screenshot"></div>
+        <div class="gallery-item reveal"><img src="data:image/svg+xml,%3Csvg%20width%3D'300'%20height%3D'200'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Crect%20width%3D'300'%20height%3D'200'%20fill'%3D'%23333'%20/%3E%3Ctext%20x%3D'150'%20y%3D'115'%20font-size%3D'20'%20text-anchor%3D'middle'%20fill'%3D'%23aaa'%3EAnalytics%20Dashboard%3C/text%3E%3C/svg%3E" alt="Screenshot"></div>
+        <div class="gallery-item reveal"><img src="data:image/svg+xml,%3Csvg%20width%3D'300'%20height%3D'200'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Crect%20width%3D'300'%20height%3D'200'%20fill'%3D'%23333'%20/%3E%3Ctext%20x%3D'150'%20y%3D'115'%20font-size%3D'20'%20text-anchor%3D'middle'%20fill'%3D'%23aaa'%3EAPI%20Console%3C/text%3E%3C/svg%3E" alt="Screenshot"></div>
+        <div class="gallery-item reveal"><img src="data:image/svg+xml,%3Csvg%20width%3D'300'%20height%3D'200'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Crect%20width%3D'300'%20height%3D'200'%20fill'%3D'%23333'%20/%3E%3Ctext%20x%3D'150'%20y%3D'115'%20font-size%3D'20'%20text-anchor%3D'middle'%20fill'%3D'%23aaa'%3EUser%20Management%3C/text%3E%3C/svg%3E" alt="Screenshot"></div>
+        <div class="gallery-item reveal"><img src="data:image/svg+xml,%3Csvg%20width%3D'300'%20height%3D'200'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Crect%20width%3D'300'%20height%3D'200'%20fill'%3D'%23333'%20/%3E%3Ctext%20x%3D'150'%20y%3D'115'%20font-size%3D'20'%20text-anchor%3D'middle'%20fill'%3D'%23aaa'%3ESettings%20Panel%3C/text%3E%3C/svg%3E" alt="Screenshot"></div>
+    </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox hidden">
+    <span class="close">&times;</span>
+    <img class="lightbox-img" src="" alt="Enlarged">
+</div>
+
+<!-- Testimonials Slider -->
+<section class="testimonials container" id="about">
+    <h2 class="section-title reveal">What Our Clients Say</h2>
+    <div class="testimonial-slider">
+        <div class="testimonial active">
+            <p>"Nexora transformed our deployment pipeline – we saved 30% in operational costs!"</p>
+            <h4>— Alex Rivera, CTO, Cloudify</h4>
+        </div>
+        <div class="testimonial">
+            <p>"The real‑time automation is a game‑changer. Our team can focus on innovation."</p>
+            <h4>— Priya Shah, DevOps Lead, DataSphere</h4>
+        </div>
+        <div class="testimonial">
+            <p>"Security and compliance are built‑in. We finally feel safe in the cloud."</p>
+            <h4>— Michael Chen, CIO, FinTechCo</h4>
+        </div>
+    </div>
+</section>
+
+<!-- Contact / Booking Form -->
+<section class="contact container" id="contact">
+    <h2 class="section-title reveal">Get Started Today</h2>
+    <form id="contact-form" class="contact-form">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="text" name="company" placeholder="Company" required>
+        <button type="submit" class="cta-btn small">Request Demo</button>
+    </form>
+    <div id="form-message" class="form-message hidden"></div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="social">
+            <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        </div>
+        <p>&copy; 2026 Nexora Systems. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

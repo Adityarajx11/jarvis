@@ -1,0 +1,5 @@
+{
+  "prompt": "\"Build a single-page landing site for a fictional company called 'Nexora Systems' — a B2B SaaS company selling cloud automation tools. Include: a sticky navbar with logo + 4 links (Product, Pricing, About, Contact), a hero section with headline, subheadline, and a CTA button ('Start Free Trial'), a 3-column features section with icons, a pricing table with 3 tiers, a testimonials strip with 2–3 quotes, and a footer with social links and copyright. Use a clean modern dark theme with a single accent color (electric blue). Fully responsive, mobile-first, single HTML file with embedded CSS — no external assets except one CDN icon library.\"",
+  "category": "landing",
+  "title": "Called"
+}

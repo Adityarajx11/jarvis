@@ -1,0 +1,5 @@
+{
+  "prompt": "Prompt:\n\n\"Build a single-page 3D web interface called 'Jarvis Core' — a glowing rotating sphere (wireframe + particle glow, cyan/blue) centered on a black background, built with Three.js. The sphere should slowly auto-rotate, and pulse/expand slightly when the user clicks or speaks (simulate with a button labeled 'Activate'). Add mouse-drag orbit controls to rotate the view. Include a thin HUD-style circular ring around the sphere that lights up segment-by-segment when active, like a voice-visualizer. Keep it a single HTML file, no external assets, minimal UI text ('JARVIS ONLINE' in a corner, small monospace font).\"",
+  "category": "landing",
+  "title": "Landing Page"
+}

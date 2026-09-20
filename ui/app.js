@@ -164,12 +164,31 @@ bdict.onclick = () => {
   listen();
 };
 
-document.getElementById('drop').addEventListener('dragover', e => e.preventDefault());
-document.getElementById('drop').addEventListener('drop', e => {
+const dropBox = document.getElementById('drop');
+const bfiles = document.getElementById('bfiles');
+const showFiles = () => {
+  const names = [...(bfiles.files || [])].map(f => f.name);
+  document.getElementById('bstatus').textContent = names.length ? `${names.length} file(s): ${names.join(', ')}` : '';
+};
+dropBox.addEventListener('click', e => { if (e.target !== bfiles) bfiles.click(); });
+dropBox.addEventListener('dragover', e => e.preventDefault());
+dropBox.addEventListener('drop', e => {
   e.preventDefault();
-  document.getElementById('bfiles').files = e.dataTransfer.files;
-  document.getElementById('bstatus').textContent = `${e.dataTransfer.files.length} file(s)`;
+  bfiles.files = e.dataTransfer.files;
+  showFiles();
 });
+bfiles.addEventListener('change', showFiles);
+
+async function readBuildFiles() {
+  const out = [];
+  const list = document.getElementById('bfiles').files || [];
+  for (const f of list) {
+    if (f.size > 8 * 1024 * 1024) { showToast(f.name + ' skipped (8MB max each).'); continue; }
+    const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+    out.push({ name: f.name, content: String(dataUrl).split(',')[1] || '' });
+  }
+  return out;
+}
 
 document.getElementById('bbuild').onclick = async () => {
   const prompt = document.getElementById('bprompt').value.trim();
@@ -177,17 +196,28 @@ document.getElementById('bbuild').onclick = async () => {
   const name = document.getElementById('bname').value.trim();
   const out = document.getElementById('bout');
   if (!prompt) return showToast('Describe what you want built.');
-  out.textContent = 'Building...';
+  out.textContent = 'Asking Jarvis AI...';
+  const ctl = new AbortController();
+  const t1 = setTimeout(() => { out.textContent = 'Still generating — big pages take 2–4 min...'; }, 30000);
+  const t2 = setTimeout(() => { out.textContent = 'Almost there — polishing the last files...'; }, 90000);
+  const t6 = setTimeout(() => ctl.abort(), 360000);
+  const stopTimers = () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t6); };
   try {
+    const files = await readBuildFiles();
     const r = await fetch('/api/build', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, category, files: [], name })
+      body: JSON.stringify({ prompt, category, files, name }),
+      signal: ctl.signal
     });
     const p = await r.json();
+    stopTimers();
     if (p.error) { out.textContent = 'Failed: ' + p.error; return; }
     out.innerHTML = `Built <b>${p.title}</b> (${p.files.join(', ')})<br><a href="${p.url}" target="_blank">Open preview</a>`;
     addMessage('jarvis', `Built ${p.title}. Preview opened.`);
-  } catch { out.textContent = 'Build failed — backend offline.'; }
+  } catch (e) {
+    stopTimers();
+    out.textContent = e && e.name === 'AbortError' ? 'Build timed out after 6 min — try a shorter prompt.' : 'Build failed — backend offline.';
+  }
 };
 
 document.getElementById('brefresh').onclick = () => { loadProjects(); refreshSys(); };
