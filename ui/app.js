@@ -95,9 +95,14 @@ micBtn.onclick = () => {
   rec.start();
 };
 
+function orbTalk(on) {
+  try { window.jarvisTalking = !!on; } catch {}
+}
+
 function stopTalking() {
   try { speechSynthesis.cancel(); } catch {}
   speaking = false;
+  orbTalk(false);
 }
 
 function speak(t) {
@@ -109,8 +114,9 @@ function speak(t) {
     const voices = speechSynthesis.getVoices().filter(v => v.lang?.startsWith('en'));
     const pref = ['Google US English', 'Microsoft Guy', 'Microsoft Aria', 'Daniel'];
     for (const p of pref) { const v = voices.find(v => v.name.includes(p)); if (v) { u.voice = v; break; } }
-    u.onstart = () => { speaking = true; };
-    u.onend = u.onerror = () => { speaking = false; };
+    u.onstart = () => { speaking = true; orbTalk(true); };
+    u.onboundary = () => { try { window.jarvisWordAt = performance.now(); } catch {} };
+    u.onend = u.onerror = () => { speaking = false; orbTalk(false); };
     speechSynthesis.speak(u);
   } catch {}
 }
@@ -408,6 +414,34 @@ setInterval(pollReminders, 10000);
       cam.position.y = 0.4 + Math.sin(t * 0.2) * 0.06;
       cam.lookAt(0, 0, 0);
       renderer.render(scene, cam);
+    })();
+  } catch {}
+})();
+
+// Fullscreen golden dust (2D canvas behind everything)
+(function() {
+  try {
+    const c = document.getElementById('dust');
+    if (!c) return;
+    const x = c.getContext('2d');
+    const N = 300;
+    const ps = [];
+    const size = () => { c.width = innerWidth; c.height = innerHeight; };
+    addEventListener('resize', size); size();
+    for (let i = 0; i < N; i++) ps.push({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.6 + 0.4, s: Math.random() * 0.25 + 0.05, o: Math.random() * 0.5 + 0.15, ph: Math.random() * 6.28 });
+    (function tick() {
+      requestAnimationFrame(tick);
+      const t = performance.now() * 0.001;
+      x.clearRect(0, 0, c.width, c.height);
+      ps.forEach(p => {
+        p.y -= p.s; p.x += Math.sin(t * 0.5 + p.ph) * 0.15;
+        if (p.y < -4) { p.y = c.height + 4; p.x = Math.random() * c.width; }
+        const tw = p.o * (0.6 + 0.4 * Math.sin(t * 2 + p.ph));
+        x.beginPath();
+        x.arc(p.x, p.y, p.r, 0, 6.29);
+        x.fillStyle = 'rgba(255,200,90,' + tw.toFixed(3) + ')';
+        x.fill();
+      });
     })();
   } catch {}
 })();

@@ -13,7 +13,7 @@
   html, body {
     height: 100%;
     margin: 0;
-    background: #000;
+    background: transparent;
     overflow: hidden;
   }
   canvas { display: block; }
@@ -65,10 +65,10 @@
   var camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
   camera.position.set(0, 0, 6.5);
 
-  var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(innerWidth, innerHeight);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 1);
+  renderer.setClearColor(0x000000, 0);
   document.body.appendChild(renderer.domElement);
 
   // lighting - single strong raking key light for that dark, sculpted look
@@ -100,19 +100,6 @@
   );
   scene.add(coreGlow);
 
-  // golden dust particles floating around the orb
-  var pCount = 350;
-  var pPos = new Float32Array(pCount * 3);
-  for (var i = 0; i < pCount; i++) {
-    pPos[i * 3] = (Math.random() - 0.5) * 8;
-    pPos[i * 3 + 1] = (Math.random() - 0.5) * 6;
-    pPos[i * 3 + 2] = -1 - Math.random() * 4;
-  }
-  var pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  var dust = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xffcf6b, size: 0.035, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
-  scene.add(dust);
-
   var dirs = [];
   for (var i = 0; i < COUNT; i++) {
     var t = i / (COUNT - 1);
@@ -141,6 +128,13 @@
     dotGeo.attributes.position.needsUpdate = true;
   }
 
+  // talk flag from parent page - orb gets lively while Jarvis speaks
+  var talking = false;
+  var talkEnv = 0;
+  window.addEventListener('message', function(e) {
+    if (e && e.data && typeof e.data.orbTalk !== 'undefined') talking = !!e.data.orbTalk;
+  });
+
   function onResize() {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
@@ -152,12 +146,12 @@
     requestAnimationFrame(animate);
     var time = t * 0.00018;
     updateSpikes(time);
-    dots.rotation.y += 0.0022;
+    talkEnv += ((talking ? 1 : 0) - talkEnv) * (talking ? 0.25 : 0.06);
+    dots.rotation.y += 0.0022 + talkEnv * 0.012;
     dots.rotation.x = Math.sin(time * 0.4) * 0.08;
-    var cp = 1 + Math.sin(t * 0.003) * 0.07;
+    var cp = 1 + Math.sin(t * 0.003) * (0.07 + talkEnv * 0.14) + talkEnv * 0.05 * Math.abs(Math.sin(t * 0.012));
     core.scale.setScalar(cp);
-    coreGlow.scale.setScalar(1 + Math.sin(t * 0.003 + 1) * 0.1);
-    dust.rotation.y += 0.0004;
+    coreGlow.scale.setScalar(1 + Math.sin(t * 0.003 + 1) * 0.1 + talkEnv * 0.25);
     renderer.render(scene, camera);
   }
   requestAnimationFrame(animate);
