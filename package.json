@@ -1,0 +1,43 @@
+{
+  "name": "jarvis",
+  "version": "1.0.0",
+  "description": "Native AI like Jarvis - full system control, HUD UI, local Ollama brain",
+  "main": "electron.js",
+  "type": "commonjs",
+  "bin": {
+    "jarvis": "./bin/jarvis.js"
+  },
+  "scripts": {
+    "start": "node main.js",
+    "estart": "electron .",
+    "dist": "electron-builder --win portable",
+    "setup": "npm install && node scripts/setup.js"
+  },
+  "build": {
+    "appId": "com.jarvis.desktop",
+    "productName": "JARVIS",
+    "files": [
+      "main.js",
+      "electron.js",
+      "core/**/*",
+      "ui/**/*",
+      "bin/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "JARVIS.exe"
+    }
+  },
+  "dependencies": {
+    "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "electron": "^44.4.1",
+    "electron-builder": "^26.15.3"
+  }
+}

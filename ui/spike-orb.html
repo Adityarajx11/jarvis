@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spike Orb</title>
+<style>
+  :root{
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: #000;
+    overflow: hidden;
+  }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<script src="three.min.js"></script>
+<script>
+(function(){
+  // ---- tiny self-contained 3D Perlin-style noise (no external lib) ----
+  function ImprovedNoise() {
+    function fade(t){ return t*t*t*(t*(t*6-15)+10); }
+    function lerp(t,a,b){ return a+t*(b-a); }
+    function grad(hash,x,y,z){
+      var h = hash & 15;
+      var u = h < 8 ? x : y;
+      var v = h < 4 ? y : (h === 12 || h === 14 ? x : z);
+      return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+    }
+    var perm = [];
+    for (var i = 0; i < 256; i++) perm[i] = i;
+    var seed = 12345;
+    function rand(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    for (var i = 255; i > 0; i--) {
+      var j = Math.floor(rand() * (i + 1));
+      var tmp = perm[i]; perm[i] = perm[j]; perm[j] = tmp;
+    }
+    var p = new Uint8Array(512);
+    for (var i = 0; i < 256; i++) p[i] = p[i + 256] = perm[i];
+
+    this.noise = function(x, y, z) {
+      var X = Math.floor(x) & 255, Y = Math.floor(y) & 255, Z = Math.floor(z) & 255;
+      x -= Math.floor(x); y -= Math.floor(y); z -= Math.floor(z);
+      var u = fade(x), v = fade(y), w = fade(z);
+      var A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z,
+          B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+      return lerp(w,
+        lerp(v, lerp(u, grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z)),
+                lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z))),
+        lerp(v, lerp(u, grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1)),
+                lerp(u, grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1)))
+      );
+    };
+  }
+  var noise = new ImprovedNoise();
+
+  // ---- scene setup ----
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 6.5);
+
+  var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 1);
+  document.body.appendChild(renderer.domElement);
+
+  // lighting - single strong raking key light for that dark, sculpted look
+  scene.add(new THREE.HemisphereLight(0x333344, 0x000000, 0.35));
+  var key = new THREE.DirectionalLight(0xffffff, 1.4);
+  key.position.set(-4, 5, 6);
+  scene.add(key);
+  var rim = new THREE.DirectionalLight(0x5577ff, 0.35);
+  rim.position.set(4, -3, -5);
+  scene.add(rim);
+
+  // ---- dots: yellow points on a Fibonacci sphere, breathing with noise ----
+  var COUNT = 1800;
+  var dotGeo = new THREE.BufferGeometry();
+  var dotPos = new Float32Array(COUNT * 3);
+  dotGeo.setAttribute('position', new THREE.BufferAttribute(dotPos, 3));
+  var dots = new THREE.Points(dotGeo, new THREE.PointsMaterial({ color: 0xffb732, size: 0.055, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }));
+  scene.add(dots);
+
+  // glowing core inside the spikes
+  var core = new THREE.Mesh(
+    new THREE.SphereGeometry(0.55, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xfff3c4 })
+  );
+  scene.add(core);
+  var coreGlow = new THREE.Mesh(
+    new THREE.SphereGeometry(0.85, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffdf80, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false })
+  );
+  scene.add(coreGlow);
+
+  // golden dust particles floating around the orb
+  var pCount = 350;
+  var pPos = new Float32Array(pCount * 3);
+  for (var i = 0; i < pCount; i++) {
+    pPos[i * 3] = (Math.random() - 0.5) * 8;
+    pPos[i * 3 + 1] = (Math.random() - 0.5) * 6;
+    pPos[i * 3 + 2] = -1 - Math.random() * 4;
+  }
+  var pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  var dust = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xffcf6b, size: 0.035, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
+  scene.add(dust);
+
+  var dirs = [];
+  for (var i = 0; i < COUNT; i++) {
+    var t = i / (COUNT - 1);
+    var inclination = Math.acos(1 - 2 * t);
+    var azimuth = Math.PI * (1 + Math.sqrt(5)) * i;
+    dirs.push(new THREE.Vector3(
+      Math.sin(inclination) * Math.cos(azimuth),
+      Math.sin(inclination) * Math.sin(azimuth),
+      Math.cos(inclination)
+    ));
+  }
+
+  var dummy = new THREE.Object3D();
+  var up = new THREE.Vector3(0, 1, 0);
+  var baseRadius = 2.0;
+
+  function updateSpikes(time) {
+    for (var i = 0; i < COUNT; i++) {
+      var dir = dirs[i];
+      var n = noise.noise(dir.x * 1.4 + time, dir.y * 1.4 + time, dir.z * 1.4 + time);
+      var r = baseRadius + n * 0.35;
+      dotPos[i * 3] = dir.x * r;
+      dotPos[i * 3 + 1] = dir.y * r;
+      dotPos[i * 3 + 2] = dir.z * r;
+    }
+    dotGeo.attributes.position.needsUpdate = true;
+  }
+
+  function onResize() {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  }
+  window.addEventListener('resize', onResize);
+
+  function animate(t) {
+    requestAnimationFrame(animate);
+    var time = t * 0.00018;
+    updateSpikes(time);
+    dots.rotation.y += 0.0022;
+    dots.rotation.x = Math.sin(time * 0.4) * 0.08;
+    var cp = 1 + Math.sin(t * 0.003) * 0.07;
+    core.scale.setScalar(cp);
+    coreGlow.scale.setScalar(1 + Math.sin(t * 0.003 + 1) * 0.1);
+    dust.rotation.y += 0.0004;
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JARVIS</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<canvas id="scene"></canvas>
+<iframe id="orb-frame" src="spike-orb.html" title="orb"></iframe>
+<div class="overlay"></div>
+
+<div class="app">
+  <header>
+    <div class="logo">
+      <span class="dot"></span>
+      <span>J.A.R.V.I.S</span>
+    </div>
+    <div class="stats">
+      <span class="stat" id="cpu-stat">CPU --</span>
+      <span class="stat" id="ram-stat">RAM --</span>
+      <span class="stat" id="bat-stat">BAT --</span>
+      <span class="clock" id="clock">--:--</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-section">
+        <h3>Quick Commands</h3>
+        <button data-cmd="day report">Day Report</button>
+        <button data-cmd="cpu usage">CPU Usage</button>
+        <button data-cmd="ram status">RAM Status</button>
+        <button data-cmd="disk space">Disk Space</button>
+        <button data-cmd="battery status">Battery</button>
+        <button data-cmd="my ip">My IP</button>
+        <button data-cmd="system uptime">Uptime</button>
+        <button data-cmd="wifi networks">WiFi</button>
+        <button data-cmd="screenshot">Screenshot</button>
+        <button data-cmd="clipboard">Clipboard</button>
+        <button data-cmd="dark mode">Dark Mode</button>
+        <button data-cmd="light mode">Light Mode</button>
+      </div>
+      <div class="side-section">
+        <h3>Roadmap</h3>
+        <div id="rm-bar"><div id="rm-fill"></div></div>
+        <div id="rm-count"></div>
+        <div id="rm-list"></div>
+        <div class="side-input">
+          <input id="tinput" placeholder="New task..." />
+          <button id="tadd">+</button>
+        </div>
+      </div>
+      <div class="side-section">
+        <h3>Projects</h3>
+        <button id="brefresh" class="btn-ghost">Refresh</button>
+        <span id="pstatus"></span>
+        <div id="plist"></div>
+      </div>
+    </aside>
+
+    <main id="chat">
+      <div class="welcome" id="welcome">
+        <div class="welcome-icon">
+          <svg viewBox="0 0 100 100" width="80" height="80">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#ff4400" stroke-width="1" opacity="0.3"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="#ff6600" stroke-width="1" opacity="0.5"/>
+            <circle cx="50" cy="50" r="15" fill="none" stroke="#ff8800" stroke-width="2"/>
+            <circle cx="50" cy="50" r="4" fill="#ffaa00"/>
+          </svg>
+        </div>
+        <h1>JARVIS</h1>
+        <p>AI assistant ready. Type or speak a command.</p>
+      </div>
+    </main>
+
+    <aside class="sidebar right">
+      <div class="side-section">
+        <h3>System</h3>
+        <div class="sys-grid">
+          <div class="sys-item"><span class="sys-label">CPU</span><span class="sys-val" id="side-cpu">--</span></div>
+          <div class="sys-item"><span class="sys-label">RAM</span><span class="sys-val" id="side-ram">--</span></div>
+          <div class="sys-item"><span class="sys-label">BAT</span><span class="sys-val" id="side-bat">--</span></div>
+          <div class="sys-item"><span class="sys-label">UPTIME</span><span class="sys-val" id="side-uptime">--</span></div>
+        </div>
+      </div>
+      <div class="side-section">
+        <h3>Voice</h3>
+        <label class="toggle"><input type="checkbox" id="voiceReply" checked /><span class="slider"></span> Auto-speak replies</label>
+        <select id="voicePick" title="Jarvis voice"></select>
+      </div>
+      <div class="side-section">
+        <h3>Builder</h3>
+        <select id="bcat">
+          <option value="portfolio">Portfolio</option>
+          <option value="landing">Landing Page</option>
+          <option value="restaurant">Restaurant</option>
+          <option value="blog">Blog</option>
+          <option value="todo">Todo App</option>
+        </select>
+        <input id="bname" placeholder="Project name (optional)" />
+        <textarea id="bprompt" rows="3" placeholder="Describe what you want built..."></textarea>
+        <div class="row">
+          <button id="bdictate" class="btn-ghost">Dictate</button>
+          <span id="bstatus"></span>
+        </div>
+        <div id="drop">Drop files here or <input type="file" id="bfiles" multiple /></div>
+        <button id="bbuild" class="btn-primary">Build</button>
+        <div id="bout"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="input-row">
+      <button id="mic" title="Voice input">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <input id="input" placeholder="Ask anything or give a command..." autocomplete="off" />
+      <button id="send">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+    <div class="sysline">
+      <span id="sys-tasks">0 tasks</span>
+      <span class="sep"></span>
+      <span id="sys-projects">0 projects</span>
+      <span class="sep"></span>
+      <span id="sys-uptime">up --</span>
+    </div>
+  </footer>
+</div>
+
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

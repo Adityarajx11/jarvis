@@ -1,0 +1,1 @@
+function send(){const n=document.getElementById('n').value||'friend';alert('Thanks '+n+'! (wire this to your email/backend next)');}
